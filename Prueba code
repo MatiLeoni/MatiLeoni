@@ -1,0 +1,63 @@
+<?php
+	$cn=mysqli_connect("localhost","root","","empresa");
+	$res=mysqli_query($cn,"SELECT *
+						FROM empleados");
+	$carg=mysqli_query($cn,"SELECT *
+						FROM cargos");
+	if(count($_POST)>0){
+
+		//validacion del id de empleado
+		if(!isset($_POST['empleado']))die("error1");
+		if(!ctype_digit($_POST['empleado']))die("error2");
+		if($_POST['empleado']<1)die("error3");
+
+		$aux = mysqli_query($cn, "SELECT *
+								FROM empleados
+								WHERE empleado_id =".$_POST['empleado']." LIMIT 1");
+
+		if(mysqli_num_rows($aux)!=1)die("error4");
+		$eid=$_POST['empleado']; //paso el dato a variable limpia
+
+		//validacion del monto de adelanto
+		if(!isset($_POST['monto']))die("error5");
+		if(!is_numeric($_POST['monto']))die("error6");
+		$monto=$_POST['monto'];
+
+
+
+		mysqli_query($cn, "INSERT INTO adelantos
+			(empleado_id, fecha, monto)
+			VALUES
+			($eid, NOW(), $monto) ");
+	}
+
+
+?>
+<!DOCTYPE html>
+<html>
+<head>	
+	<title>Alta de adelanto</title>
+</head>
+<body>
+	<h1>Alta de adelanto</h1>
+	<form action="" method="post">
+
+		<label for="empleado">Quien?:</label>
+		<select name="empleado" id="empleado">
+			<?php while ($fila=mysqli_fetch_assoc($res)) { ?>
+			<option value="<?= $fila['empleado_id']?>">
+				<?= $fila['nombre'] . $aux2 ?>
+			</option>
+			<?php } ?>
+		</select>
+		<br/><br/>
+
+		<label for="monto">Monto:</label>
+		<input type="text" name="monto" id="monto"/>
+
+		<br/><br/>
+		<input type="submit" name="">
+
+	</form>
+</body>
+</html>
